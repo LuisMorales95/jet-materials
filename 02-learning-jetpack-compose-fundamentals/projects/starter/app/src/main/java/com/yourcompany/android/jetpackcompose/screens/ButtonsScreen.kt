@@ -49,9 +49,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.IconToggleButton
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Facebook
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,9 +97,11 @@ fun ExploreButtonsScreen() {
 @Preview(showBackground = true)
 @Composable
 fun MyButton() {
-  //TODO add your code here
 
-    val buttonShape = CircleShape.copy(CornerSize(4.dp))
+    val iconToggled = remember {
+        mutableStateOf(false)
+    }
+
     Column {
         Button(
             onClick = { /*TODO*/ },
@@ -106,6 +116,34 @@ fun MyButton() {
                 color = Color.White
             )
         }
+        OutlinedButton(
+            onClick = { /*TODO*/ },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.White,
+                disabledBackgroundColor = Color.LightGray
+            ),
+            border = BorderStroke(1.dp, colorResource(id = R.color.colorPrimary))
+        ) {
+            Text(text = stringResource(id = R.string.button_text), color = colorResource(id = R.color.colorPrimary))
+        }
+        Row {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Filled.Facebook, contentDescription = null, tint = Color.Blue)
+            }
+
+            IconToggleButton(
+                checked = iconToggled.value,
+                onCheckedChange = { iconToggled.value = it }
+            ) {
+                val color = if (iconToggled.value) Color.Blue else Color.LightGray
+                Icon(imageVector = Icons.Filled.Facebook, contentDescription = null, tint = color)
+            }
+        }
+    }
+/*
+
+        val buttonShape = CircleShape.copy(CornerSize(4.dp))
+        Column {
         Box(
             modifier = Modifier
                 .background(
@@ -119,24 +157,25 @@ fun MyButton() {
         ) {
             Text(text = "Click Me!!", color = colorResource(id = R.color.colorOnPrimary), fontSize = 12.sp)
         }
-    }
+    }*/
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MyRadioGroup() {
+
     val radioButtons = listOf(0, 1, 2)
     val selectedButton = remember {
         mutableStateOf(radioButtons.first())
     }
+    val colors = RadioButtonDefaults.colors(
+        selectedColor = colorResource(id = R.color.colorPrimary),
+        unselectedColor = colorResource(id = R.color.colorPrimaryDark),
+        disabledColor = Color.LightGray
+    )
     Column {
         radioButtons.forEach {
             val isSelected = it == selectedButton.value
-            val colors = RadioButtonDefaults.colors(
-                selectedColor = colorResource(id = R.color.colorPrimary),
-                unselectedColor = colorResource(id = R.color.colorPrimaryDark),
-                disabledColor = Color.LightGray
-            )
             Row (verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = isSelected,
@@ -149,7 +188,19 @@ fun MyRadioGroup() {
     }
 }
 
+@Preview
 @Composable
 fun MyFloatingActionButton() {
-  //TODO add your code here
+
+    FloatingActionButton(
+        onClick = { /*TODO*/ },
+        backgroundColor = colorResource(id = R.color.colorPrimary),
+        contentColor = Color.White,
+        content = {
+            Icon(
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = "Test FAB"
+            )
+        }
+    )
 }

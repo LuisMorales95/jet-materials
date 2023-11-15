@@ -37,9 +37,16 @@ package com.yourcompany.android.jetpackcompose.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.yourcompany.android.jetpackcompose.R
 import com.yourcompany.android.jetpackcompose.router.BackButtonHandler
 import com.yourcompany.android.jetpackcompose.router.JetFundamentalsRouter
 import com.yourcompany.android.jetpackcompose.router.Screen
@@ -52,10 +59,29 @@ fun ProgressIndicatorScreen() {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
   ) {
-    //TODO add your code here
+      ProgressIndicators()
   }
 
   BackButtonHandler {
     JetFundamentalsRouter.navigateTo(Screen.Navigation)
   }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProgressIndicators() {
+    Column(
+        modifier = Modifier.padding(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        CircularProgressIndicator(
+            color = colorResource(id = R.color.colorPrimary),
+            strokeWidth = 5.dp,
+            progress = 0.5F
+        )
+        LinearProgressIndicator(
+            color = colorResource(id = R.color.colorPrimary),
+            progress = 0.5F
+        )
+    }
 }
