@@ -34,7 +34,17 @@
 
 package com.yourcompany.android.jetpackcompose.screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.yourcompany.android.jetpackcompose.R
 import com.yourcompany.android.jetpackcompose.router.BackButtonHandler
 import com.yourcompany.android.jetpackcompose.router.JetFundamentalsRouter
@@ -44,14 +54,24 @@ val THREE_ELEMENT_LIST = listOf(R.string.first, R.string.second, R.string.third)
 
 @Composable
 fun RowScreen() {
-  MyRow()
+    MyRow(PaddingValues())
 
-  BackButtonHandler {
-    JetFundamentalsRouter.navigateTo(Screen.Navigation)
-  }
+    BackButtonHandler {
+        JetFundamentalsRouter.navigateTo(Screen.Navigation)
+    }
 }
 
 @Composable
-fun MyRow() {
-  //TODO write your code here
+fun MyRow(paddingValues: PaddingValues) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        THREE_ELEMENT_LIST.forEach {
+            Text(text = stringResource(id = it))
+        }
+    }
 }
