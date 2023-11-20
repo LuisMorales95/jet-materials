@@ -45,7 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.yourcompany.android.jetpackcompose.R
+import com.yourcompany.android.jetpackcompose.R.string
+import com.yourcompany.android.jetpackcompose.R.color
 import com.yourcompany.android.jetpackcompose.router.BackButtonHandler
 import com.yourcompany.android.jetpackcompose.router.JetFundamentalsRouter
 import com.yourcompany.android.jetpackcompose.router.Screen
@@ -60,7 +61,7 @@ fun AlertDialogScreen() {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_3")
+@Preview
 @Composable
 fun MyAlertDialog() {
     val shouldShowDialog = remember {
@@ -68,12 +69,16 @@ fun MyAlertDialog() {
     }
     if (shouldShowDialog.value) {
         AlertDialog(
+            title = {
+                Text(text = stringResource(id = string.alert_dialog_title))
+            },
+            text = {
+                Text(text = stringResource(id = string.alert_dialog_text))
+            },
             onDismissRequest = {
                 shouldShowDialog.value = false
                 JetFundamentalsRouter.navigateTo(Screen.Navigation)
             },
-            title = { Text(text = stringResource(id = R.string.alert_dialog_title)) },
-            text = { Text(text = stringResource(id = R.string.alert_dialog_text)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -81,13 +86,10 @@ fun MyAlertDialog() {
                         JetFundamentalsRouter.navigateTo(Screen.Navigation)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = colorResource(id = R.color.colorPrimary)
+                        backgroundColor = colorResource(id = color.colorPrimary)
                     )
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.confirm),
-                        color = Color.White
-                    )
+                    Text(text = stringResource(id = string.confirm), color = Color.White)
                 }
             }
         )

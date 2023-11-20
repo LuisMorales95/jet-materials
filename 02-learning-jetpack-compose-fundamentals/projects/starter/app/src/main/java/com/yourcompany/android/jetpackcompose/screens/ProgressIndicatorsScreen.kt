@@ -39,8 +39,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -54,17 +57,17 @@ import com.yourcompany.android.jetpackcompose.router.Screen
 @Composable
 fun ProgressIndicatorScreen() {
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        ProgressIndicators()
-    }
+  Column(
+      modifier = Modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+  ) {
+      ProgressIndicators()
+  }
 
-    BackButtonHandler {
-        JetFundamentalsRouter.navigateTo(Screen.Navigation)
-    }
+  BackButtonHandler {
+    JetFundamentalsRouter.navigateTo(Screen.Navigation)
+  }
 }
 
 @Preview(showBackground = true)
@@ -72,15 +75,15 @@ fun ProgressIndicatorScreen() {
 fun ProgressIndicators() {
     Column(
         modifier = Modifier.padding(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
             color = colorResource(id = R.color.colorPrimary),
-            strokeWidth = 5.dp,
+            strokeWidth = 5.dp
         )
         LinearProgressIndicator(
-            color = colorResource(id = R.color.colorPrimary),
-            progress = 0.5F
+            color = colorResource(id = R.color.colorPrimary)
         )
     }
 }
