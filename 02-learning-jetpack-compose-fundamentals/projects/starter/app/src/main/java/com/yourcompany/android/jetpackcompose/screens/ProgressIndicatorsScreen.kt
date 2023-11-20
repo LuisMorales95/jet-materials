@@ -54,17 +54,17 @@ import com.yourcompany.android.jetpackcompose.router.Screen
 @Composable
 fun ProgressIndicatorScreen() {
 
-  Column(
-      modifier = Modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center
-  ) {
-      ProgressIndicators()
-  }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        ProgressIndicators()
+    }
 
-  BackButtonHandler {
-    JetFundamentalsRouter.navigateTo(Screen.Navigation)
-  }
+    BackButtonHandler {
+        JetFundamentalsRouter.navigateTo(Screen.Navigation)
+    }
 }
 
 @Preview(showBackground = true)
@@ -77,7 +77,6 @@ fun ProgressIndicators() {
         CircularProgressIndicator(
             color = colorResource(id = R.color.colorPrimary),
             strokeWidth = 5.dp,
-            progress = 0.5F
         )
         LinearProgressIndicator(
             color = colorResource(id = R.color.colorPrimary),
