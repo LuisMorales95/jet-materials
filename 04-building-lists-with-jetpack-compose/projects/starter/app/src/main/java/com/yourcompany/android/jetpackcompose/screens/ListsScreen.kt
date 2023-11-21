@@ -147,17 +147,12 @@ fun ListItem(bookCategory: BookCategory, modifier: Modifier = Modifier) {
 fun BookImage(
     @DrawableRes bookImage: Int
 ) {
-    Box(
-        modifier = Modifier.background(Color.LightGray)
-    ) {
-        Image(
-            modifier = Modifier.size(170.dp, 200.dp),
-            painter = painterResource(id = bookImage),
-            contentScale = ContentScale.FillBounds,
-            contentDescription = stringResource(id = R.string.book_image)
-        )
-    }
-
+    Image(
+        modifier = Modifier.size(170.dp, 200.dp),
+        painter = painterResource(id = bookImage),
+        contentScale = ContentScale.FillBounds,
+        contentDescription = stringResource(id = R.string.book_image)
+    )
 }
 
 @Preview(showBackground = true)
