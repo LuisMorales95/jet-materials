@@ -38,30 +38,68 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import com.yourcompany.android.jetnotes.routing.Screen
+import com.yourcompany.android.jetnotes.theme.JetNotesTheme
+import com.yourcompany.android.jetnotes.ui.components.AppDrawer
+import com.yourcompany.android.jetnotes.ui.components.AppDrawerPreview
+import com.yourcompany.android.jetnotes.ui.components.Note
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModelFactory
+import kotlinx.coroutines.launch
 
 /**
  * Main activity for the app.
  */
 class MainActivity : AppCompatActivity() {
 
-  private val viewModel: MainViewModel by viewModels(factoryProducer = {
-    MainViewModelFactory(
-      this,
-      (application as JetNotesApplication).dependencyInjector.repository
-    )
-  })
+    private val viewModel: MainViewModel by viewModels(factoryProducer = {
+        MainViewModelFactory(
+            this,
+            (application as JetNotesApplication).dependencyInjector.repository
+        )
+    })
 
-  @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-  override fun onCreate(savedInstanceState: Bundle?) {
-    // Switch to AppTheme for displaying the activity
-    setTheme(R.style.Theme_JetNotes)
 
-    super.onCreate(savedInstanceState)
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Switch to AppTheme for displaying the activity
+        setTheme(R.style.Theme_JetNotes)
 
-    setContent {
+        super.onCreate(savedInstanceState)
 
+        setContent {
+            JetNotesTheme {
+                val coroutineScope = rememberCoroutineScope()
+                val scaffoldState = rememberScaffoldState()
+                val currentScreen = remember {
+                    mutableStateOf<Screen>(Screen.Notes)
+                }
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    drawerContent = {
+                        AppDrawer(
+                            currentScreen = currentScreen.value,
+                            onScreenSelected = { screen ->
+                                coroutineScope.launch {
+                                    currentScreen.value = screen
+                                    scaffoldState.drawerState.close()
+                                }
+                            }
+                        )
+                    },
+                    content = {
+                        Note()
+                    }
+                )
+            }
+        }
     }
-  }
 }
