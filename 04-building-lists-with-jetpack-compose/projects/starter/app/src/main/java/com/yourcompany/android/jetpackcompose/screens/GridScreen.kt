@@ -34,6 +34,18 @@
 
 package com.yourcompany.android.jetpackcompose.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
@@ -42,12 +54,19 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.yourcompany.android.jetpackcompose.R
 import com.yourcompany.android.jetpackcompose.router.BackButtonHandler
 import com.yourcompany.android.jetpackcompose.router.JetFundamentalsRouter
 import com.yourcompany.android.jetpackcompose.router.Screen
 
-private val items = listOf(
+private val itemIcons = listOf(
     Icons.Filled.Check,
     Icons.Filled.Close,
     Icons.Filled.ThumbUp,
@@ -62,7 +81,7 @@ private val items = listOf(
 
 @Composable
 fun GridScreen() {
-    //TODO add your code here
+    GridList()
 
     BackButtonHandler {
         JetFundamentalsRouter.navigateTo(Screen.Navigation)
@@ -70,6 +89,42 @@ fun GridScreen() {
 }
 
 @Composable
+fun GridList() {
+    LazyVerticalGrid(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        columns = GridCells.Fixed(3),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        content = {
+            items(itemIcons.size) {
+                GridIcon(iconResource = itemIcons[it])
+            }
+        }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewGridList() {
+    GridList()
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
 fun GridIcon(iconResource: ImageVector) {
-    //TODO add your code here
+    Icon(
+        imageVector = iconResource,
+        contentDescription = stringResource(id = R.string.grid_icon),
+        tint = colorResource(id = R.color.colorPrimary),
+        modifier = Modifier
+            .size(80.dp)
+            .padding(20.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewGridIcon() {
+    GridIcon(iconResource = itemIcons.first())
 }
