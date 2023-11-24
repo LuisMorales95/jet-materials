@@ -21,12 +21,10 @@ fun NoteColor(
     modifier: Modifier = Modifier,
     color: Color,
     size: Dp,
-    padding: Dp = 0.dp,
     border: Dp
 ) {
     Box(
         modifier = modifier
-            .padding(padding)
             .size(size)
             .clip(CircleShape)
             .background(color)
@@ -47,7 +45,6 @@ fun NoteColorPreview() {
         Modifier,
         Color.Red,
         40.dp,
-        4.dp,
         2.dp
     )
 }
