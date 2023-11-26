@@ -35,7 +35,11 @@ package com.yourcompany.android.jetnotes.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
@@ -51,7 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yourcompany.android.jetnotes.domain.model.NoteModel
-import com.yourcompany.android.jetnotes.theme.green
+import com.yourcompany.android.jetnotes.theme.JetNotesTheme
+import com.yourcompany.android.jetnotes.util.fromHex
 
 @Composable
 fun Note(
@@ -75,7 +80,7 @@ fun Note(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp, end = 16.dp),
-            color = green,
+            color = Color.fromHex(note.color.hex),
             size = 40.dp,
             border = 1.dp
         )
@@ -105,25 +110,33 @@ fun Note(
                 )
             )
         }
-        Checkbox(
-            checked = false,
-            onCheckedChange = { onNoteCheckedChange(note) },
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterVertically)
-        )
+        if (note.isCheckedOff != null) {
+            Checkbox(
+                checked = note.isCheckedOff,
+                onCheckedChange = { isChecked ->
+                    val newNote = note.copy(isCheckedOff = isChecked)
+                    onNoteCheckedChange(newNote)
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterVertically)
+            )
+        }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun NotePreview() {
-    Note(
-        note = NoteModel(
-            title = "JetNotes",
-            content = "Some Note"
-        ),
-        onNoteClick = {},
-        onNoteCheckedChange = {}
-    )
+    JetNotesTheme {
+        Note(
+            note = NoteModel(
+                title = "Note 1",
+                content = "Content 1",
+                isCheckedOff = null
+            ),
+            onNoteClick = {},
+            onNoteCheckedChange = {}
+        )
+    }
 }

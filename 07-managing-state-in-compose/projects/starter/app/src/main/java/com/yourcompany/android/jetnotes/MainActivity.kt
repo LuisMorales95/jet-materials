@@ -45,6 +45,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.yourcompany.android.jetnotes.domain.model.NoteModel
 import com.yourcompany.android.jetnotes.routing.Screen
 import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.AppDrawer
@@ -89,19 +92,6 @@ class MainActivity : AppCompatActivity() {
 
                 Scaffold(
                     scaffoldState = scaffoldState,
-                    topBar = {
-                        TopAppBar(title = "JetNotes", icon = Icons.Filled.List) {
-                            coroutineScope.launch {
-                                with(scaffoldState.drawerState) {
-                                    if (isClosed) {
-                                        open()
-                                    } else {
-                                        close()
-                                    }
-                                }
-                            }
-                        }
-                    },
                     drawerContent = {
                         AppDrawer(
                             currentScreen = Screen.Notes,
@@ -120,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                             startDestination = Screen.Notes.route
                         ) {
                             composable(route = Screen.Notes.route) {
-                                NotesScreen(viewModel = viewModel)
+                                NotesScreen(viewModel)
                             }
                             composable(route = Screen.SaveNote.route) {
 

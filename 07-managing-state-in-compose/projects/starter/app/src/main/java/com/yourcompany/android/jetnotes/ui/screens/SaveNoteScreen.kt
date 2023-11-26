@@ -54,72 +54,72 @@ import com.yourcompany.android.jetnotes.util.fromHex
 
 @Composable
 private fun ColorPicker(
-  colors: List<ColorModel>,
-  onColorSelect: (ColorModel) -> Unit
+    colors: List<ColorModel>,
+    onColorSelect: (ColorModel) -> Unit
 ) {
-  Column(modifier = Modifier.fillMaxWidth()) {
-    Text(
-      text = "Color picker",
-      fontSize = 18.sp,
-      fontWeight = FontWeight.Bold,
-      modifier = Modifier.padding(8.dp)
-    )
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-      items(colors.size) { itemIndex ->
-        val color = colors[itemIndex]
-        ColorItem(
-          color = color,
-          onColorSelect = onColorSelect
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Color picker",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(8.dp)
         )
-      }
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(colors.size) { itemIndex ->
+                val color = colors[itemIndex]
+                ColorItem(
+                    color = color,
+                    onColorSelect = onColorSelect
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun ColorItem(
-  color: ColorModel,
-  onColorSelect: (ColorModel) -> Unit
+    color: ColorModel,
+    onColorSelect: (ColorModel) -> Unit
 ) {
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .clickable(
-        onClick = {
-          onColorSelect(color)
-        }
-      )
-  ) {
-    NoteColor(
-      modifier = Modifier.padding(10.dp),
-      color = Color.fromHex(color.hex),
-      size = 80.dp,
-      border = 2.dp
-    )
-    Text(
-      text = color.name,
-      fontSize = 22.sp,
-      modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .align(Alignment.CenterVertically)
-    )
-  }
+    Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable(
+            onClick = {
+              onColorSelect(color)
+            }
+          )
+    ) {
+        NoteColor(
+            modifier = Modifier.padding(10.dp),
+            color = Color.fromHex(color.hex),
+            size = 80.dp,
+            border = 2.dp
+        )
+        Text(
+            text = color.name,
+            fontSize = 22.sp,
+            modifier = Modifier
+              .padding(horizontal = 16.dp)
+              .align(Alignment.CenterVertically)
+        )
+    }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ColorItemPreview() {
-  ColorItem(ColorModel.DEFAULT) {}
+    ColorItem(ColorModel.DEFAULT) {}
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ColorPickerPreview() {
-  ColorPicker(
-    colors = listOf(
-      ColorModel.DEFAULT,
-      ColorModel.DEFAULT,
-      ColorModel.DEFAULT
-    )
-  ) { }
+    ColorPicker(
+        colors = listOf(
+            ColorModel.DEFAULT,
+            ColorModel.DEFAULT,
+            ColorModel.DEFAULT
+        )
+    ) { }
 }
