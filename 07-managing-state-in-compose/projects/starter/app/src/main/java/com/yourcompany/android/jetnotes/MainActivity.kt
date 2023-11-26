@@ -38,9 +38,15 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -50,6 +56,7 @@ import com.yourcompany.android.jetnotes.routing.Screen
 import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.AppDrawer
 import com.yourcompany.android.jetnotes.ui.components.Note
+import com.yourcompany.android.jetnotes.ui.components.TopAppBar
 import com.yourcompany.android.jetnotes.ui.screens.NotesScreen
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModelFactory
@@ -60,54 +67,71 @@ import kotlinx.coroutines.launch
  */
 class MainActivity : AppCompatActivity() {
 
-  private val viewModel: MainViewModel by viewModels(factoryProducer = {
-    MainViewModelFactory(
-      this,
-      (application as JetNotesApplication).dependencyInjector.repository
-    )
-  })
-
-  @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-  override fun onCreate(savedInstanceState: Bundle?) {
-    // Switch to AppTheme for displaying the activity
-    setTheme(R.style.Theme_JetNotes)
-
-    super.onCreate(savedInstanceState)
-
-    setContent {
-      JetNotesTheme {
-        val coroutineScope = rememberCoroutineScope()
-        val scaffoldState: ScaffoldState = rememberScaffoldState()
-        val navController = rememberNavController()
-
-        Scaffold(
-          scaffoldState = scaffoldState,
-          drawerContent = {
-            AppDrawer(
-              currentScreen = Screen.Notes,
-              onScreenSelected = { screen ->
-                /* TODO */
-                coroutineScope.launch {
-                  scaffoldState.drawerState.close()
-                }
-              }
-            )
-          },
-          content = {
-            NavHost(navController = navController, startDestination = Screen.Notes.route) {
-              composable(route = Screen.Notes.route) {
-                NotesScreen(viewModel = viewModel)
-              }
-              composable(route = Screen.SaveNote.route) {
-
-              }
-              composable(route = Screen.Trash.route) {
-
-              }
-            }
-          }
+    private val viewModel: MainViewModel by viewModels(factoryProducer = {
+        MainViewModelFactory(
+            this,
+            (application as JetNotesApplication).dependencyInjector.repository
         )
-      }
+    })
+
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Switch to AppTheme for displaying the activity
+        setTheme(R.style.Theme_JetNotes)
+
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            JetNotesTheme {
+                val coroutineScope = rememberCoroutineScope()
+                val scaffoldState: ScaffoldState = rememberScaffoldState()
+                val navController = rememberNavController()
+
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    topBar = {
+                        TopAppBar(title = "JetNotes", icon = Icons.Filled.List) {
+                            coroutineScope.launch {
+                                with(scaffoldState.drawerState) {
+                                    if (isClosed) {
+                                        open()
+                                    } else {
+                                        close()
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    drawerContent = {
+                        AppDrawer(
+                            currentScreen = Screen.Notes,
+                            onScreenSelected = { screen ->
+                                /* TODO */
+                                coroutineScope.launch { scaffoldState.drawerState.close() }
+                            },
+                            onNavigationIconClick = {
+                                coroutineScope.launch { scaffoldState.drawerState.close() }
+                            }
+                        )
+                    },
+                    content = {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screen.Notes.route
+                        ) {
+                            composable(route = Screen.Notes.route) {
+                                NotesScreen(viewModel = viewModel)
+                            }
+                            composable(route = Screen.SaveNote.route) {
+
+                            }
+                            composable(route = Screen.Trash.route) {
+
+                            }
+                        }
+                    }
+                )
+            }
+        }
     }
-  }
 }
