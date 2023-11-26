@@ -43,4 +43,5 @@ import com.yourcompany.android.jetnotes.data.repository.Repository
  */
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
+    val notesNotInTrash 
 }
