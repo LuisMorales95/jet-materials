@@ -51,56 +51,56 @@ import kotlinx.coroutines.withContext
  */
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
-  val notesNotInTrash: LiveData<List<NoteModel>> by lazy {
-    repository.getAllNotesNotInTrash().asLiveData()
-  }
-
-  val notesInTrash: LiveData<List<NoteModel>> by lazy {
-    repository.getAllNotesInTrash().asLiveData()
-  }
-
-  private var _selectedNotes = MutableStateFlow<List<NoteModel>>(listOf())
-  val selectedNotes: LiveData<List<NoteModel>> = _selectedNotes.asLiveData()
-
-  fun onCreateNewNoteClick() {
-    // TODO - Open SaveNoteScreen
-  }
-
-  fun onNoteClick(note: NoteModel) {
-    // TODO - Open SaveNoteScreen in Edit mode
-  }
-
-  fun onNoteCheckedChange(note: NoteModel) {
-    viewModelScope.launch(Dispatchers.Default) {
-      repository.insertNote(note)
+    val notesNotInTrash: LiveData<List<NoteModel>> by lazy {
+        repository.getAllNotesNotInTrash().asLiveData()
     }
-  }
 
-  fun onNoteSelected(note: NoteModel) {
-    _selectedNotes.value = _selectedNotes.value!!.toMutableList().apply {
-      if (contains(note)) {
-        remove(note)
-      } else {
-        add(note)
-      }
+    val notesInTrash: LiveData<List<NoteModel>> by lazy {
+        repository.getAllNotesInTrash().asLiveData()
     }
-  }
 
-  fun restoreNotes(notes: List<NoteModel>) {
-    viewModelScope.launch(Dispatchers.Default) {
-      repository.restoreNotesFromTrash(notes.map { it.id })
-      withContext(Dispatchers.Main) {
-        _selectedNotes.value = listOf()
-      }
-    }
-  }
+    private var _selectedNotes = MutableStateFlow<List<NoteModel>>(listOf())
+    val selectedNotes: LiveData<List<NoteModel>> = _selectedNotes.asLiveData()
 
-  fun permanentlyDeleteNotes(notes: List<NoteModel>) {
-    viewModelScope.launch(Dispatchers.Default) {
-      repository.deleteNotes(notes.map { it.id })
-      withContext(Dispatchers.Main) {
-        _selectedNotes.value = listOf()
-      }
+    fun onCreateNewNoteClick() {
+        // TODO - Open SaveNoteScreen
     }
-  }
+
+    fun onNoteClick(note: NoteModel) {
+        // TODO - Open SaveNoteScreen in Edit mode
+    }
+
+    fun onNoteCheckedChange(note: NoteModel) {
+        viewModelScope.launch(Dispatchers.Default) {
+            repository.insertNote(note)
+        }
+    }
+
+    fun onNoteSelected(note: NoteModel) {
+        _selectedNotes.value = _selectedNotes.value!!.toMutableList().apply {
+            if (contains(note)) {
+                remove(note)
+            } else {
+                add(note)
+            }
+        }
+    }
+
+    fun restoreNotes(notes: List<NoteModel>) {
+        viewModelScope.launch(Dispatchers.Default) {
+            repository.restoreNotesFromTrash(notes.map { it.id })
+            withContext(Dispatchers.Main) {
+                _selectedNotes.value = listOf()
+            }
+        }
+    }
+
+    fun permanentlyDeleteNotes(notes: List<NoteModel>) {
+        viewModelScope.launch(Dispatchers.Default) {
+            repository.deleteNotes(notes.map { it.id })
+            withContext(Dispatchers.Main) {
+                _selectedNotes.value = listOf()
+            }
+        }
+    }
 }
