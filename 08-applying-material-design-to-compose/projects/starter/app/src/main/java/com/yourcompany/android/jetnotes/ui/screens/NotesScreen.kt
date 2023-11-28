@@ -35,6 +35,7 @@ package com.yourcompany.android.jetnotes.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
@@ -51,6 +52,9 @@ fun NotesScreen(viewModel: MainViewModel) {
   val notes: List<NoteModel> by viewModel
     .notesNotInTrash
     .observeAsState(listOf())
+  Scaffold {
+    
+  }
   Column {
     TopAppBar(
       title = "JetNotes",
