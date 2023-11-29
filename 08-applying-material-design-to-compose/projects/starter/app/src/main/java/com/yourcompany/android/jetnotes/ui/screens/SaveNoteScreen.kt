@@ -39,8 +39,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yourcompany.android.jetnotes.domain.model.ColorModel
+import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.NoteColor
 import com.yourcompany.android.jetnotes.util.fromHex
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
@@ -58,7 +70,107 @@ fun SaveNoteScreen(
 	viewModel: MainViewModel,
 	onNavigateBack: () -> Unit
 ) {
+	Scaffold(
+		topBar = {
+			SaveNoteTopAppBar(
+				isEditingMode = false,
+				onBackClick = { /*TODO*/ },
+				onSaveNoteClick = { /*TODO*/ },
+				onColorPickerClick = { /*TODO*/ }) {
+				
+			}
+		},
+		content = {
+			
+		}
+	)
+}
 
+@Composable
+fun SaveNoteTopAppBar(
+	isEditingMode: Boolean,
+	onBackClick: () -> Unit,
+	onSaveNoteClick: () -> Unit,
+	onColorPickerClick: () -> Unit,
+	onDeleteClick: () -> Unit,
+) {
+	val modifier = Modifier.padding(12.dp)
+	TopAppBar(
+		title = {
+			Text(
+				text = "Save Note",
+				color = MaterialTheme.colors.surface
+			)
+		},
+		navigationIcon = {
+			IconButton(onClick = onBackClick) {
+				Icon(
+					imageVector = Icons.Filled.ArrowBack,
+					contentDescription = "Navigate Back",
+					tint = MaterialTheme.colors.surface
+				)
+			}
+		},
+		contentColor = MaterialTheme.colors.surface,
+		actions = {
+			IconButton(onClick = onSaveNoteClick) {
+				Icon(
+					imageVector = Icons.Filled.Check,
+					contentDescription = "Save Note Button",
+					tint = MaterialTheme.colors.surface
+				)
+			}
+			
+			IconButton(onClick = onColorPickerClick) {
+				Icon(
+					imageVector = Icons.Filled.ColorLens,
+					contentDescription = "Color Picker Button",
+					tint = MaterialTheme.colors.surface
+				)
+			}
+			if (isEditingMode) {
+				IconButton(onClick = onDeleteClick) {
+					Icon(
+						imageVector = Icons.Filled.RestoreFromTrash,
+						contentDescription = "Delete Note Button ",
+						tint = MaterialTheme.colors.surface
+					)
+				}
+			}
+		}
+	)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SaveNoteTopAppBarPreview() {
+	JetNotesTheme {
+		SaveNoteTopAppBar(
+			isEditingMode = false,
+			onBackClick = {},
+			onSaveNoteClick = {},
+			onColorPickerClick = {},
+			onDeleteClick = {}
+		)
+	}
+}
+@Preview(showBackground = true)
+@Composable
+fun SaveNoteTopAppBarEditModePreview() {
+	JetNotesTheme {
+		SaveNoteTopAppBar(
+			isEditingMode = true,
+			onBackClick = {},
+			onSaveNoteClick = {},
+			onColorPickerClick = {},
+			onDeleteClick = {}
+		)
+	}
+}
+
+@Composable
+fun SaveNote() {
+	
 }
 
 @Composable
@@ -92,12 +204,12 @@ fun ColorItem(
 ) {
 	Row(
 		modifier = Modifier
-          .fillMaxWidth()
-          .clickable(
-            onClick = {
-              onColorSelect(color)
-            }
-          )
+			.fillMaxWidth()
+			.clickable(
+				onClick = {
+					onColorSelect(color)
+				}
+			)
 	) {
 		NoteColor(
 			modifier = Modifier.padding(10.dp),
@@ -109,19 +221,19 @@ fun ColorItem(
 			text = color.name,
 			fontSize = 22.sp,
 			modifier = Modifier
-              .padding(horizontal = 16.dp)
-              .align(Alignment.CenterVertically)
+				.padding(horizontal = 16.dp)
+				.align(Alignment.CenterVertically)
 		)
 	}
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ColorItemPreview() {
 	ColorItem(ColorModel.DEFAULT) {}
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ColorPickerPreview() {
 	ColorPicker(
