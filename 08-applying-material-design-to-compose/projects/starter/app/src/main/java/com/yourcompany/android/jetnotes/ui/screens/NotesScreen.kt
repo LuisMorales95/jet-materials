@@ -34,70 +34,123 @@
 package com.yourcompany.android.jetnotes.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.yourcompany.android.jetnotes.domain.model.NoteModel
+import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.Note
 import com.yourcompany.android.jetnotes.ui.components.TopAppBar
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
 
 @Composable
-fun NotesScreen(viewModel: MainViewModel) {
-  val notes: List<NoteModel> by viewModel
-    .notesNotInTrash
-    .observeAsState(listOf())
-  Scaffold {
-    
-  }
-  Column {
-    TopAppBar(
-      title = "JetNotes",
-      icon = Icons.Filled.List,
-      onIconClick = {}
-    )
-    NotesList(
-      notes = notes,
-      onNoteCheckedChange = { viewModel.onNoteCheckedChange(it) },
-      onNoteClick = { viewModel.onNoteClick(it) }
-    )
-  }
+fun NotesScreen(
+	viewModel: MainViewModel,
+	onOpenNavigationDrawer: () -> Unit,
+	onNavigateToSaveNote: () -> Unit
+) {
+	val notes: List<NoteModel> by viewModel
+		.notesNotInTrash
+		.observeAsState(listOf())
+	Scaffold(
+		floatingActionButtonPosition = FabPosition.End,
+		floatingActionButton = {
+			AddNoteButton(
+				onNavigateToSaveNote = {
+					viewModel.onCreateNewNoteClick()
+					onNavigateToSaveNote.invoke()
+				}
+			)
+		},
+		topBar = {
+			TopAppBar(
+				title = "JetNotes",
+				icon = Icons.Filled.List,
+				onIconClick = { onOpenNavigationDrawer.invoke() }
+			)
+		},
+		content = {
+			if (notes.isNotEmpty()) {
+				NotesList(
+					Modifier.padding(it),
+					notes = notes,
+					onNoteCheckedChange = { viewModel.onNoteCheckedChange(it) },
+					onNoteClick = { viewModel.onNoteClick(it) }
+				)
+			}
+		}
+	)
+}
+
+@Composable
+fun AddNoteButton(
+	onNavigateToSaveNote: () -> Unit
+) {
+	FloatingActionButton(
+		contentColor = MaterialTheme.colors.background,
+		onClick = { onNavigateToSaveNote.invoke() },
+		content = {
+			Icon(
+				imageVector = Icons.Filled.Add,
+				contentDescription = "Add Save Note"
+			)
+		}
+	)
+}
+
+@Preview
+@Composable
+fun AddNoteButtonPreview() {
+	JetNotesTheme {
+		AddNoteButton {
+		}
+	}
 }
 
 @Composable
 private fun NotesList(
-  notes: List<NoteModel>,
-  onNoteCheckedChange: (NoteModel) -> Unit,
-  onNoteClick: (NoteModel) -> Unit
+	modifier: Modifier = Modifier,
+	notes: List<NoteModel>,
+	onNoteCheckedChange: (NoteModel) -> Unit,
+	onNoteClick: (NoteModel) -> Unit
 ) {
-  LazyColumn {
-    items(count = notes.size) { noteIndex ->
-      val note = notes[noteIndex]
-      Note(
-        note = note,
-        onNoteClick = onNoteClick,
-        onNoteCheckedChange = onNoteCheckedChange,
-        isSelected = false
-      )
-    }
-  }
+	LazyColumn(
+		modifier = modifier
+	) {
+		items(count = notes.size) { noteIndex ->
+			val note = notes[noteIndex]
+			Note(
+				note = note,
+				onNoteClick = onNoteClick,
+				onNoteCheckedChange = onNoteCheckedChange,
+				isSelected = false
+			)
+		}
+	}
 }
 
 @Preview
 @Composable
 private fun NotesListPreview() {
-  NotesList(
-    notes = listOf(
-      NoteModel(1, "Note 1", "Content 1", null),
-      NoteModel(2, "Note 2", "Content 2", false),
-      NoteModel(3, "Note 3", "Content 3", true)
-    ),
-    onNoteCheckedChange = {},
-    onNoteClick = {}
-  )
+	NotesList(
+		notes = listOf(
+			NoteModel(1, "Note 1", "Content 1", null),
+			NoteModel(2, "Note 2", "Content 2", false),
+			NoteModel(3, "Note 3", "Content 3", true)
+		),
+		onNoteCheckedChange = {},
+		onNoteClick = {}
+	)
 }

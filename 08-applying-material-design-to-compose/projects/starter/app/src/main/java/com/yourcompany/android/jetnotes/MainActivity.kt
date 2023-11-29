@@ -41,8 +41,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.yourcompany.android.jetnotes.routing.Screen
@@ -75,7 +77,8 @@ class MainActivity : AppCompatActivity() {
         setContent {
             JetNotesTheme {
                 val coroutineScope = rememberCoroutineScope()
-                val scaffoldState: ScaffoldState = rememberScaffoldState()
+                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val scaffoldState: ScaffoldState = rememberScaffoldState(drawerState = drawerState)
                 val navController = rememberNavController()
 
                 Scaffold(
@@ -84,9 +87,7 @@ class MainActivity : AppCompatActivity() {
                         AppDrawer(
                             currentScreen = Screen.Notes,
                             onScreenSelected = { screen ->
-                                coroutineScope.launch {
-                                    scaffoldState.drawerState.close()
-                                }
+                                coroutineScope.launch { drawerState.close() }
                             }
                         )
                     },
@@ -95,7 +96,12 @@ class MainActivity : AppCompatActivity() {
                             navController = navController,
                             startDestination = Screen.Notes.route
                         ) {
-                            composable(Screen.Notes.route) { NotesScreen(viewModel) }
+                            composable(Screen.Notes.route) { NotesScreen(
+                                viewModel = viewModel,
+                                onOpenNavigationDrawer = {
+                                    coroutineScope.launch { drawerState.open() }
+                                }
+                            ) }
                         }
                     }
                 )
