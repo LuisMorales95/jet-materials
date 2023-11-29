@@ -40,4 +40,14 @@ sealed class Screen(val route: String) {
   object Notes : Screen("Notes")
   object SaveNote : Screen("SaveNote")
   object Trash : Screen("Trash")
+	companion object {
+		fun fromRoute(route: String?): Screen {
+			return when(route) {
+				SaveNote.route -> SaveNote
+				Trash.route -> Trash
+				Notes.route -> Notes
+				else -> Notes
+			}
+		}
+	}
 }

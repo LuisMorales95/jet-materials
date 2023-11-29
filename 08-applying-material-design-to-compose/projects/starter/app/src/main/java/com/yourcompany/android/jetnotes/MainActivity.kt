@@ -50,9 +50,12 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yourcompany.android.jetnotes.routing.Screen
 import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.AppDrawer
@@ -88,13 +91,25 @@ class MainActivity : AppCompatActivity() {
 				val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 				val scaffoldState: ScaffoldState = rememberScaffoldState(drawerState = drawerState)
 				val navController = rememberNavController()
+				val navBackStackEntry by navController.currentBackStackEntryAsState()
     
 				Scaffold(
 					scaffoldState = scaffoldState,
 					drawerContent = {
 						AppDrawer(
-							currentScreen = Screen.Notes,
+							currentScreen = Screen.fromRoute(
+								navBackStackEntry?.destination?.route
+							),
 							onScreenSelected = { screen ->
+								navController.navigate(screen.route) {
+									popUpTo(
+										navController.graph.findStartDestination().id
+									) {
+										saveState = true
+									}
+									launchSingleTop = true
+									restoreState = true
+								}
 								coroutineScope.launch { drawerState.close() }
 							}
 						)
@@ -144,9 +159,7 @@ fun MainActivityScreen(
         composable(Screen.Trash.route) {
             TrashScreen(
                 viewModel = viewModel,
-                onTopBarNavigationIconClicked = {
-                
-                }
+                onTopBarNavigationIconClicked = openNavigationDrawer
             )
         }
     }
