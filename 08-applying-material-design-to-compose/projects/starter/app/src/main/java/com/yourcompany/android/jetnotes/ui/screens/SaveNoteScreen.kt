@@ -33,6 +33,7 @@
  */
 package com.yourcompany.android.jetnotes.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,6 +66,7 @@ import com.yourcompany.android.jetnotes.ui.components.NoteColor
 import com.yourcompany.android.jetnotes.util.fromHex
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SaveNoteScreen(
 	viewModel: MainViewModel,
@@ -74,15 +76,13 @@ fun SaveNoteScreen(
 		topBar = {
 			SaveNoteTopAppBar(
 				isEditingMode = false,
-				onBackClick = { /*TODO*/ },
-				onSaveNoteClick = { /*TODO*/ },
-				onColorPickerClick = { /*TODO*/ }) {
+				onBackClick = onNavigateBack,
+				onSaveNoteClick = {  },
+				onColorPickerClick = {  }) {
 				
 			}
 		},
-		content = {
-			
-		}
+		content = {}
 	)
 }
 
@@ -94,7 +94,6 @@ fun SaveNoteTopAppBar(
 	onColorPickerClick: () -> Unit,
 	onDeleteClick: () -> Unit,
 ) {
-	val modifier = Modifier.padding(12.dp)
 	TopAppBar(
 		title = {
 			Text(
