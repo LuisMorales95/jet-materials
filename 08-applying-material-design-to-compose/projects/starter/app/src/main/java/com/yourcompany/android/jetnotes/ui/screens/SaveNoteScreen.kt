@@ -35,6 +35,7 @@ package com.yourcompany.android.jetnotes.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -91,7 +95,13 @@ fun SaveNoteScreen(
 			}
 		},
 		content = {
-		
+			val isCheckedOff: Boolean = noteEntry.isCheckedOff ?: false
+			val colorModel: ColorModel = noteEntry.color
+			PickedColor(color = colorModel)
+			NoteCheckOption(
+				isChecked = isCheckedOff,
+				onCheckedChange = {}
+			)
 		}
 	)
 }
@@ -154,26 +164,66 @@ fun SaveNoteTopAppBar(
 @Composable
 fun SaveNoteTopAppBarPreview() {
 	JetNotesTheme {
-		SaveNoteTopAppBar(
-			isEditingMode = false,
-			onBackClick = {},
-			onSaveNoteClick = {},
-			onColorPickerClick = {},
-			onDeleteClick = {}
-		)
+		Column(
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			
+			SaveNoteTopAppBar(
+				isEditingMode = false,
+				onBackClick = {},
+				onSaveNoteClick = {},
+				onColorPickerClick = {},
+				onDeleteClick = {}
+			)
+			
+			SaveNoteTopAppBar(
+				isEditingMode = true,
+				onBackClick = {},
+				onSaveNoteClick = {},
+				onColorPickerClick = {},
+				onDeleteClick = {}
+			)
+		}
 	}
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SaveNoteTopAppBarEditModePreview() {
+fun ContentTextField(
+	modifier: Modifier,
+	label: String,
+	text: String,
+	onTextChanged: (String) -> Unit
+) {
+	TextField(
+		value = text,
+		onValueChange = onTextChanged,
+		label = {
+			Text(text = label)
+		},
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(horizontal = 8.dp),
+		colors = TextFieldDefaults.textFieldColors(
+			backgroundColor = MaterialTheme.colors.surface
+		)
+	)
+}
+
+@Preview
+@Composable
+fun ContentTextFieldPreview() {
 	JetNotesTheme {
-		SaveNoteTopAppBar(
-			isEditingMode = true,
-			onBackClick = {},
-			onSaveNoteClick = {},
-			onColorPickerClick = {},
-			onDeleteClick = {}
+		ContentTextField(
+			modifier = Modifier,
+			label = "Title",
+			text = "",
+			onTextChanged = {}
+		)
+		ContentTextField(
+			modifier = Modifier,
+			label = "Title",
+			text = "",
+			onTextChanged = {}
 		)
 	}
 }
@@ -205,6 +255,41 @@ fun PickedColor(color: ColorModel) {
 fun PickedColorPreview() {
 	JetNotesTheme {
 		PickedColor(color = ColorModel.DEFAULT)
+	}
+}
+
+@Composable
+fun NoteCheckOption(
+	isChecked: Boolean,
+	onCheckedChange: (Boolean) -> Unit
+) {
+	Row(
+		modifier = Modifier
+			.padding(8.dp)
+			.padding(top = 26.dp)
+	) {
+		Text(
+			text = "Can note be checked off?",
+			modifier = Modifier
+				.weight(1f)
+				.align(Alignment.CenterVertically)
+		)
+		Switch(
+			checked = isChecked,
+			onCheckedChange = onCheckedChange,
+			modifier = Modifier.padding(start = 8.dp)
+		)
+	}
+}
+
+@Preview
+@Composable
+fun NoteCheckOptionPreview() {
+	JetNotesTheme {
+		NoteCheckOption(
+			isChecked = false,
+			onCheckedChange = {}
+		)
 	}
 }
 
