@@ -52,6 +52,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +62,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yourcompany.android.jetnotes.domain.model.ColorModel
+import com.yourcompany.android.jetnotes.domain.model.NEW_NOTE_ID
+import com.yourcompany.android.jetnotes.domain.model.NoteModel
 import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.NoteColor
 import com.yourcompany.android.jetnotes.util.fromHex
@@ -72,17 +75,24 @@ fun SaveNoteScreen(
 	viewModel: MainViewModel,
 	onNavigateBack: () -> Unit
 ) {
+	
+	val noteEntry: NoteModel by viewModel.noteEntry
+		.observeAsState(NoteModel())
+	
 	Scaffold(
 		topBar = {
+			val isEditingMode: Boolean = noteEntry.id != NEW_NOTE_ID
 			SaveNoteTopAppBar(
-				isEditingMode = false,
+				isEditingMode = isEditingMode,
 				onBackClick = onNavigateBack,
 				onSaveNoteClick = {  },
 				onColorPickerClick = {  }) {
 				
 			}
 		},
-		content = {}
+		content = {
+		
+		}
 	)
 }
 
@@ -153,6 +163,7 @@ fun SaveNoteTopAppBarPreview() {
 		)
 	}
 }
+
 @Preview(showBackground = true)
 @Composable
 fun SaveNoteTopAppBarEditModePreview() {
@@ -168,8 +179,33 @@ fun SaveNoteTopAppBarEditModePreview() {
 }
 
 @Composable
-fun SaveNote() {
-	
+fun PickedColor(color: ColorModel) {
+	Row(
+		modifier = Modifier
+			.padding(8.dp)
+			.padding(top = 16.dp)
+	) {
+		Text(
+			text = "Picked Color",
+			modifier = Modifier
+				.weight(1f)
+				.align(Alignment.CenterVertically)
+		)
+		NoteColor(
+			color = Color.fromHex(color.hex),
+			size = 40.dp,
+			border = 1.dp,
+			modifier = Modifier.padding(4.dp)
+		)
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PickedColorPreview() {
+	JetNotesTheme {
+		PickedColor(color = ColorModel.DEFAULT)
+	}
 }
 
 @Composable

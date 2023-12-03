@@ -41,6 +41,7 @@ import com.yourcompany.android.jetnotes.data.repository.Repository
 import com.yourcompany.android.jetnotes.domain.model.NoteModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -61,13 +62,16 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     private var _selectedNotes = MutableStateFlow<List<NoteModel>>(listOf())
     val selectedNotes: LiveData<List<NoteModel>> = _selectedNotes.asLiveData()
-
+    
+    private var _noteEntry = MutableStateFlow<NoteModel>(NoteModel())
+    val noteEntry: LiveData<NoteModel> = _noteEntry.asLiveData()
+    
     fun onCreateNewNoteClick() {
-        // TODO - Open SaveNoteScreen
+        _noteEntry.value = NoteModel()
     }
 
     fun onNoteClick(note: NoteModel) {
-        // TODO - Open SaveNoteScreen in Edit mode
+        _noteEntry.value = note
     }
 
     fun onNoteCheckedChange(note: NoteModel) {
