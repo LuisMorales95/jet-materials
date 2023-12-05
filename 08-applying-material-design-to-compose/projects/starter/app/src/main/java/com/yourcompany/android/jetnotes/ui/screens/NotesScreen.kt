@@ -33,14 +33,16 @@
  */
 package com.yourcompany.android.jetnotes.ui.screens
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
@@ -52,7 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.yourcompany.android.jetnotes.domain.model.NoteModel
 import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.Note
-import com.yourcompany.android.jetnotes.ui.components.TopAppBar
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
 
 @Composable
@@ -76,9 +77,22 @@ fun NotesScreen(
 		},
 		topBar = {
 			TopAppBar(
-				title = "JetNotes",
-				icon = Icons.Filled.List,
-				onIconClick = { onOpenNavigationDrawer.invoke() }
+				title = {
+					Text(
+						text = "JetNotes",
+						color = MaterialTheme.colors.onPrimary
+					)
+				},
+				navigationIcon = {
+					IconButton(onClick = {
+						onOpenNavigationDrawer.invoke()
+					}) {
+						Icon(
+							imageVector = Icons.Filled.List,
+							contentDescription = "Drawer Button"
+						)
+					}
+				}
 			)
 		},
 		content = {
