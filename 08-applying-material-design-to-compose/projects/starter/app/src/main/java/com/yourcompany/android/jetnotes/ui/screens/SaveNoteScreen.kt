@@ -31,6 +31,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.yourcompany.android.jetnotes.ui.screens
 
 import android.annotation.SuppressLint
@@ -38,15 +40,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.BottomDrawer
+import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
@@ -55,9 +65,15 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.RestoreFromTrash
+import androidx.compose.material.rememberBottomDrawerState
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,6 +88,7 @@ import com.yourcompany.android.jetnotes.theme.JetNotesTheme
 import com.yourcompany.android.jetnotes.ui.components.NoteColor
 import com.yourcompany.android.jetnotes.util.fromHex
 import com.yourcompany.android.jetnotes.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -82,25 +99,81 @@ fun SaveNoteScreen(
 	
 	val noteEntry: NoteModel by viewModel.noteEntry
 		.observeAsState(NoteModel())
+	val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+	val colors: List<ColorModel> by viewModel.colors
+		.observeAsState(initial = emptyList())
+	val coroutineScope = rememberCoroutineScope()
+	val moveNoteToTrashDialogShownState = rememberSaveable {
+		mutableStateOf(false)
+	}
 	
 	Scaffold(
 		topBar = {
 			val isEditingMode: Boolean = noteEntry.id != NEW_NOTE_ID
 			SaveNoteTopAppBar(
 				isEditingMode = isEditingMode,
-				onBackClick = onNavigateBack,
-				onSaveNoteClick = {  },
-				onColorPickerClick = {  }) {
-				
-			}
+				onBackClick = {
+					onNavigateBack.invoke()
+				},
+				onSaveNoteClick = {
+					viewModel.saveNote(noteEntry)
+					onNavigateBack.invoke()
+				},
+				onColorPickerClick = {
+					coroutineScope.launch {
+						drawerState.open()
+					}
+				},
+				onDeleteClick = {
+					moveNoteToTrashDialogShownState.value = true
+				}
+			)
 		},
 		content = {
-			val isCheckedOff: Boolean = noteEntry.isCheckedOff ?: false
-			val colorModel: ColorModel = noteEntry.color
-			PickedColor(color = colorModel)
-			NoteCheckOption(
-				isChecked = isCheckedOff,
-				onCheckedChange = {}
+			BottomDrawer(
+				modifier = Modifier.padding(it),
+				drawerState = drawerState,
+				drawerContent = {
+					ColorPicker(colors = colors, onColorSelect = { colorModel ->
+						viewModel.onNoteEntryChange(noteEntry.copy(color = colorModel))
+					})
+				},
+				content = {
+					SaveNoteContent(
+						noteModel = noteEntry,
+						onNoteChange = { noteModel ->
+							viewModel.onNoteEntryChange(noteModel)
+						}
+					)
+					if (moveNoteToTrashDialogShownState.value) {
+						AlertDialog(
+							onDismissRequest = {
+								moveNoteToTrashDialogShownState.value = false
+							},
+							title = {
+								Text(text = "Move note to trash?")
+							},
+							text = {
+								Text(text = "Are you sure you wish to move this to trash?")
+							},
+							confirmButton = {
+								TextButton(onClick = {
+									viewModel.moveNoteToTrash(noteEntry)
+									onNavigateBack.invoke()
+								}) {
+									Text(text = "Confirm")
+								}
+							},
+							dismissButton = {
+								TextButton(onClick = {
+									moveNoteToTrashDialogShownState.value = false
+								}) {
+									Text(text = "Dismiss")
+								}
+							}
+						)
+					}
+				}
 			)
 		}
 	)
@@ -188,8 +261,61 @@ fun SaveNoteTopAppBarPreview() {
 }
 
 @Composable
+fun SaveNoteContent(
+	noteModel: NoteModel,
+	onNoteChange: (NoteModel) -> Unit
+) {
+	
+	val canBeCheckedOff: Boolean = noteModel.isCheckedOff != null
+	
+	Column(
+		modifier = Modifier.fillMaxSize()
+	) {
+		ContentTextField(
+			label = "Title",
+			text = noteModel.title,
+			onTextChanged = { newTitle ->
+				onNoteChange.invoke(noteModel.copy(title = newTitle))
+			}
+		)
+		ContentTextField(
+			label = "Body",
+			text = noteModel.content,
+			onTextChanged = { newContent ->
+				onNoteChange.invoke(noteModel.copy(content = newContent))
+			},
+			modifier = Modifier
+				.heightIn(max = 240.dp)
+				.padding(top = 16.dp)
+		)
+		NoteCheckOption(
+			isChecked = canBeCheckedOff,
+			onCheckedChange = { canBeCheckedOffNewValue ->
+				val isCheckedOff: Boolean? = if (canBeCheckedOffNewValue) false else null
+				onNoteChange.invoke(noteModel.copy(isCheckedOff = isCheckedOff))
+			}
+		)
+		PickedColor(color = noteModel.color)
+	}
+}
+
+@Preview
+@Composable
+fun SaveNoteContentPreview() {
+	JetNotesTheme {
+		SaveNoteContent(
+			noteModel = NoteModel(
+				title = "title",
+				content = "content"
+			),
+			onNoteChange = {}
+		)
+	}
+}
+
+@Composable
 fun ContentTextField(
-	modifier: Modifier,
+	modifier: Modifier = Modifier,
 	label: String,
 	text: String,
 	onTextChanged: (String) -> Unit
@@ -213,18 +339,14 @@ fun ContentTextField(
 @Composable
 fun ContentTextFieldPreview() {
 	JetNotesTheme {
-		ContentTextField(
-			modifier = Modifier,
-			label = "Title",
-			text = "",
-			onTextChanged = {}
-		)
-		ContentTextField(
-			modifier = Modifier,
-			label = "Title",
-			text = "",
-			onTextChanged = {}
-		)
+		Column {
+			ContentTextField(
+				modifier = Modifier,
+				label = "Title",
+				text = "",
+				onTextChanged = {}
+			)
+		}
 	}
 }
 
