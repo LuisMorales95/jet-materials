@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.yourcompany.android.jetreddit.JetRedditApp
 import com.yourcompany.android.jetreddit.R
 import com.yourcompany.android.jetreddit.routing.Screen
 import com.yourcompany.android.jetreddit.theme.JetRedditTheme
