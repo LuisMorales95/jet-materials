@@ -62,6 +62,7 @@ fun NotesScreen(
 	onOpenNavigationDrawer: () -> Unit,
 	onNavigateToSaveNote: () -> Unit
 ) {
+
 	val notes: List<NoteModel> by viewModel
 		.notesNotInTrash
 		.observeAsState(listOf())

@@ -93,396 +93,396 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SaveNoteScreen(
-	viewModel: MainViewModel,
-	onNavigateBack: () -> Unit
+    viewModel: MainViewModel,
+    onNavigateBack: () -> Unit
 ) {
-	
-	val noteEntry: NoteModel by viewModel.noteEntry
-		.observeAsState(NoteModel())
-	val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
-	val colors: List<ColorModel> by viewModel.colors
-		.observeAsState(initial = emptyList())
-	val coroutineScope = rememberCoroutineScope()
-	val moveNoteToTrashDialogShownState = rememberSaveable {
-		mutableStateOf(false)
-	}
-	
-	Scaffold(
-		topBar = {
-			val isEditingMode: Boolean = noteEntry.id != NEW_NOTE_ID
-			SaveNoteTopAppBar(
-				isEditingMode = isEditingMode,
-				onBackClick = {
-					onNavigateBack.invoke()
-				},
-				onSaveNoteClick = {
-					viewModel.saveNote(noteEntry)
-					onNavigateBack.invoke()
-				},
-				onColorPickerClick = {
-					coroutineScope.launch {
-						drawerState.open()
-					}
-				},
-				onDeleteClick = {
-					moveNoteToTrashDialogShownState.value = true
-				}
-			)
-		},
-		content = {
-			BottomDrawer(
-				modifier = Modifier.padding(it),
-				drawerState = drawerState,
-				drawerContent = {
-					ColorPicker(colors = colors, onColorSelect = { colorModel ->
-						viewModel.onNoteEntryChange(noteEntry.copy(color = colorModel))
-					})
-				},
-				content = {
-					SaveNoteContent(
-						noteModel = noteEntry,
-						onNoteChange = { noteModel ->
-							viewModel.onNoteEntryChange(noteModel)
-						}
-					)
-					if (moveNoteToTrashDialogShownState.value) {
-						AlertDialog(
-							onDismissRequest = {
-								moveNoteToTrashDialogShownState.value = false
-							},
-							title = {
-								Text(text = "Move note to trash?")
-							},
-							text = {
-								Text(text = "Are you sure you wish to move this to trash?")
-							},
-							confirmButton = {
-								TextButton(onClick = {
-									viewModel.moveNoteToTrash(noteEntry)
-									onNavigateBack.invoke()
-								}) {
-									Text(text = "Confirm")
-								}
-							},
-							dismissButton = {
-								TextButton(onClick = {
-									moveNoteToTrashDialogShownState.value = false
-								}) {
-									Text(text = "Dismiss")
-								}
-							}
-						)
-					}
-				}
-			)
-		}
-	)
+
+    val noteEntry: NoteModel by viewModel.noteEntry
+        .observeAsState(NoteModel())
+    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+    val colors: List<ColorModel> by viewModel.colors
+        .observeAsState(initial = emptyList())
+    val coroutineScope = rememberCoroutineScope()
+    val moveNoteToTrashDialogShownState = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    Scaffold(
+        topBar = {
+            val isEditingMode: Boolean = noteEntry.id != NEW_NOTE_ID
+            SaveNoteTopAppBar(
+                isEditingMode = isEditingMode,
+                onBackClick = {
+                    onNavigateBack.invoke()
+                },
+                onSaveNoteClick = {
+                    viewModel.saveNote(noteEntry)
+                    onNavigateBack.invoke()
+                },
+                onColorPickerClick = {
+                    coroutineScope.launch {
+                        drawerState.open()
+                    }
+                },
+                onDeleteClick = {
+                    moveNoteToTrashDialogShownState.value = true
+                }
+            )
+        },
+        content = {
+            BottomDrawer(
+                modifier = Modifier.padding(it),
+                drawerState = drawerState,
+                drawerContent = {
+                    ColorPicker(colors = colors, onColorSelect = { colorModel ->
+                        viewModel.onNoteEntryChange(noteEntry.copy(color = colorModel))
+                    })
+                },
+                content = {
+                    SaveNoteContent(
+                        noteModel = noteEntry,
+                        onNoteChange = { noteModel ->
+                            viewModel.onNoteEntryChange(noteModel)
+                        }
+                    )
+                    if (moveNoteToTrashDialogShownState.value) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                moveNoteToTrashDialogShownState.value = false
+                            },
+                            title = {
+                                Text(text = "Move note to trash?")
+                            },
+                            text = {
+                                Text(text = "Are you sure you wish to move this to trash?")
+                            },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    viewModel.moveNoteToTrash(noteEntry)
+                                    onNavigateBack.invoke()
+                                }) {
+                                    Text(text = "Confirm")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = {
+                                    moveNoteToTrashDialogShownState.value = false
+                                }) {
+                                    Text(text = "Dismiss")
+                                }
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    )
 }
 
 @Composable
 fun SaveNoteTopAppBar(
-	isEditingMode: Boolean,
-	onBackClick: () -> Unit,
-	onSaveNoteClick: () -> Unit,
-	onColorPickerClick: () -> Unit,
-	onDeleteClick: () -> Unit,
+    isEditingMode: Boolean,
+    onBackClick: () -> Unit,
+    onSaveNoteClick: () -> Unit,
+    onColorPickerClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
-	TopAppBar(
-		title = {
-			Text(
-				text = "Save Note",
-				color = MaterialTheme.colors.surface
-			)
-		},
-		navigationIcon = {
-			IconButton(onClick = onBackClick) {
-				Icon(
-					imageVector = Icons.Filled.ArrowBack,
-					contentDescription = "Navigate Back",
-					tint = MaterialTheme.colors.surface
-				)
-			}
-		},
-		contentColor = MaterialTheme.colors.surface,
-		actions = {
-			IconButton(onClick = onSaveNoteClick) {
-				Icon(
-					imageVector = Icons.Filled.Check,
-					contentDescription = "Save Note Button",
-					tint = MaterialTheme.colors.surface
-				)
-			}
-			
-			IconButton(onClick = onColorPickerClick) {
-				Icon(
-					imageVector = Icons.Filled.ColorLens,
-					contentDescription = "Color Picker Button",
-					tint = MaterialTheme.colors.surface
-				)
-			}
-			if (isEditingMode) {
-				IconButton(onClick = onDeleteClick) {
-					Icon(
-						imageVector = Icons.Filled.RestoreFromTrash,
-						contentDescription = "Delete Note Button ",
-						tint = MaterialTheme.colors.surface
-					)
-				}
-			}
-		}
-	)
+    TopAppBar(
+        title = {
+            Text(
+                text = "Save Note",
+                color = MaterialTheme.colors.surface
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Navigate Back",
+                    tint = MaterialTheme.colors.surface
+                )
+            }
+        },
+        contentColor = MaterialTheme.colors.surface,
+        actions = {
+            IconButton(onClick = onSaveNoteClick) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Save Note Button",
+                    tint = MaterialTheme.colors.surface
+                )
+            }
+
+            IconButton(onClick = onColorPickerClick) {
+                Icon(
+                    imageVector = Icons.Filled.ColorLens,
+                    contentDescription = "Color Picker Button",
+                    tint = MaterialTheme.colors.surface
+                )
+            }
+            if (isEditingMode) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Filled.RestoreFromTrash,
+                        contentDescription = "Delete Note Button ",
+                        tint = MaterialTheme.colors.surface
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SaveNoteTopAppBarPreview() {
-	JetNotesTheme {
-		Column(
-			verticalArrangement = Arrangement.spacedBy(8.dp)
-		) {
-			
-			SaveNoteTopAppBar(
-				isEditingMode = false,
-				onBackClick = {},
-				onSaveNoteClick = {},
-				onColorPickerClick = {},
-				onDeleteClick = {}
-			)
-			
-			SaveNoteTopAppBar(
-				isEditingMode = true,
-				onBackClick = {},
-				onSaveNoteClick = {},
-				onColorPickerClick = {},
-				onDeleteClick = {}
-			)
-		}
-	}
+    JetNotesTheme {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            SaveNoteTopAppBar(
+                isEditingMode = false,
+                onBackClick = {},
+                onSaveNoteClick = {},
+                onColorPickerClick = {},
+                onDeleteClick = {}
+            )
+
+            SaveNoteTopAppBar(
+                isEditingMode = true,
+                onBackClick = {},
+                onSaveNoteClick = {},
+                onColorPickerClick = {},
+                onDeleteClick = {}
+            )
+        }
+    }
 }
 
 @Composable
 fun SaveNoteContent(
-	noteModel: NoteModel,
-	onNoteChange: (NoteModel) -> Unit
+    noteModel: NoteModel,
+    onNoteChange: (NoteModel) -> Unit
 ) {
-	
-	val canBeCheckedOff: Boolean = noteModel.isCheckedOff != null
-	
-	Column(
-		modifier = Modifier.fillMaxSize()
-	) {
-		ContentTextField(
-			label = "Title",
-			text = noteModel.title,
-			onTextChanged = { newTitle ->
-				onNoteChange.invoke(noteModel.copy(title = newTitle))
-			}
-		)
-		ContentTextField(
-			label = "Body",
-			text = noteModel.content,
-			onTextChanged = { newContent ->
-				onNoteChange.invoke(noteModel.copy(content = newContent))
-			},
-			modifier = Modifier
+
+    val canBeCheckedOff: Boolean = noteModel.isCheckedOff != null
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        ContentTextField(
+            label = "Title",
+            text = noteModel.title,
+            onTextChanged = { newTitle ->
+                onNoteChange.invoke(noteModel.copy(title = newTitle))
+            }
+        )
+        ContentTextField(
+            label = "Body",
+            text = noteModel.content,
+            onTextChanged = { newContent ->
+                onNoteChange.invoke(noteModel.copy(content = newContent))
+            },
+            modifier = Modifier
 				.heightIn(max = 240.dp)
 				.padding(top = 16.dp)
-		)
-		NoteCheckOption(
-			isChecked = canBeCheckedOff,
-			onCheckedChange = { canBeCheckedOffNewValue ->
-				val isCheckedOff: Boolean? = if (canBeCheckedOffNewValue) false else null
-				onNoteChange.invoke(noteModel.copy(isCheckedOff = isCheckedOff))
-			}
-		)
-		PickedColor(color = noteModel.color)
-	}
+        )
+        NoteCheckOption(
+            isChecked = canBeCheckedOff,
+            onCheckedChange = { canBeCheckedOffNewValue ->
+                val isCheckedOff: Boolean? = if (canBeCheckedOffNewValue) false else null
+                onNoteChange.invoke(noteModel.copy(isCheckedOff = isCheckedOff))
+            }
+        )
+        PickedColor(color = noteModel.color)
+    }
 }
 
 @Preview
 @Composable
 fun SaveNoteContentPreview() {
-	JetNotesTheme {
-		SaveNoteContent(
-			noteModel = NoteModel(
-				title = "title",
-				content = "content"
-			),
-			onNoteChange = {}
-		)
-	}
+    JetNotesTheme {
+        SaveNoteContent(
+            noteModel = NoteModel(
+                title = "title",
+                content = "content"
+            ),
+            onNoteChange = {}
+        )
+    }
 }
 
 @Composable
 fun ContentTextField(
-	modifier: Modifier = Modifier,
-	label: String,
-	text: String,
-	onTextChanged: (String) -> Unit
+    modifier: Modifier = Modifier,
+    label: String,
+    text: String,
+    onTextChanged: (String) -> Unit
 ) {
-	TextField(
-		value = text,
-		onValueChange = onTextChanged,
-		label = {
-			Text(text = label)
-		},
-		modifier = modifier
+    TextField(
+        value = text,
+        onValueChange = onTextChanged,
+        label = {
+            Text(text = label)
+        },
+        modifier = modifier
 			.fillMaxWidth()
 			.padding(horizontal = 8.dp),
-		colors = TextFieldDefaults.textFieldColors(
-			backgroundColor = MaterialTheme.colors.surface
-		)
-	)
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = MaterialTheme.colors.surface
+        )
+    )
 }
 
 @Preview
 @Composable
 fun ContentTextFieldPreview() {
-	JetNotesTheme {
-		Column {
-			ContentTextField(
-				modifier = Modifier,
-				label = "Title",
-				text = "",
-				onTextChanged = {}
-			)
-		}
-	}
+    JetNotesTheme {
+        Column {
+            ContentTextField(
+                modifier = Modifier,
+                label = "Title",
+                text = "",
+                onTextChanged = {}
+            )
+        }
+    }
 }
 
 @Composable
 fun PickedColor(color: ColorModel) {
-	Row(
-		modifier = Modifier
+    Row(
+        modifier = Modifier
 			.padding(8.dp)
 			.padding(top = 16.dp)
-	) {
-		Text(
-			text = "Picked Color",
-			modifier = Modifier
+    ) {
+        Text(
+            text = "Picked Color",
+            modifier = Modifier
 				.weight(1f)
 				.align(Alignment.CenterVertically)
-		)
-		NoteColor(
-			color = Color.fromHex(color.hex),
-			size = 40.dp,
-			border = 1.dp,
-			modifier = Modifier.padding(4.dp)
-		)
-	}
+        )
+        NoteColor(
+            color = Color.fromHex(color.hex),
+            size = 40.dp,
+            border = 1.dp,
+            modifier = Modifier.padding(4.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PickedColorPreview() {
-	JetNotesTheme {
-		PickedColor(color = ColorModel.DEFAULT)
-	}
+    JetNotesTheme {
+        PickedColor(color = ColorModel.DEFAULT)
+    }
 }
 
 @Composable
 fun NoteCheckOption(
-	isChecked: Boolean,
-	onCheckedChange: (Boolean) -> Unit
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
-	Row(
-		modifier = Modifier
+    Row(
+        modifier = Modifier
 			.padding(8.dp)
 			.padding(top = 26.dp)
-	) {
-		Text(
-			text = "Can note be checked off?",
-			modifier = Modifier
+    ) {
+        Text(
+            text = "Can note be checked off?",
+            modifier = Modifier
 				.weight(1f)
 				.align(Alignment.CenterVertically)
-		)
-		Switch(
-			checked = isChecked,
-			onCheckedChange = onCheckedChange,
-			modifier = Modifier.padding(start = 8.dp)
-		)
-	}
+        )
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
 }
 
 @Preview
 @Composable
 fun NoteCheckOptionPreview() {
-	JetNotesTheme {
-		NoteCheckOption(
-			isChecked = false,
-			onCheckedChange = {}
-		)
-	}
+    JetNotesTheme {
+        NoteCheckOption(
+            isChecked = false,
+            onCheckedChange = {}
+        )
+    }
 }
 
 @Composable
 private fun ColorPicker(
-	colors: List<ColorModel>,
-	onColorSelect: (ColorModel) -> Unit
+    colors: List<ColorModel>,
+    onColorSelect: (ColorModel) -> Unit
 ) {
-	Column(modifier = Modifier.fillMaxWidth()) {
-		Text(
-			text = "Color picker",
-			fontSize = 18.sp,
-			fontWeight = FontWeight.Bold,
-			modifier = Modifier.padding(8.dp)
-		)
-		LazyColumn(modifier = Modifier.fillMaxWidth()) {
-			items(colors.size) { itemIndex ->
-				val color = colors[itemIndex]
-				ColorItem(
-					color = color,
-					onColorSelect = onColorSelect
-				)
-			}
-		}
-	}
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Color picker",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(8.dp)
+        )
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(colors.size) { itemIndex ->
+                val color = colors[itemIndex]
+                ColorItem(
+                    color = color,
+                    onColorSelect = onColorSelect
+                )
+            }
+        }
+    }
 }
 
 @Composable
 fun ColorItem(
-	color: ColorModel,
-	onColorSelect: (ColorModel) -> Unit
+    color: ColorModel,
+    onColorSelect: (ColorModel) -> Unit
 ) {
-	Row(
-		modifier = Modifier
+    Row(
+        modifier = Modifier
 			.fillMaxWidth()
 			.clickable(
 				onClick = {
 					onColorSelect(color)
 				}
 			)
-	) {
-		NoteColor(
-			modifier = Modifier.padding(10.dp),
-			color = Color.fromHex(color.hex),
-			size = 80.dp,
-			border = 2.dp
-		)
-		Text(
-			text = color.name,
-			fontSize = 22.sp,
-			modifier = Modifier
+    ) {
+        NoteColor(
+            modifier = Modifier.padding(10.dp),
+            color = Color.fromHex(color.hex),
+            size = 80.dp,
+            border = 2.dp
+        )
+        Text(
+            text = color.name,
+            fontSize = 22.sp,
+            modifier = Modifier
 				.padding(horizontal = 16.dp)
 				.align(Alignment.CenterVertically)
-		)
-	}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ColorItemPreview() {
-	ColorItem(ColorModel.DEFAULT) {}
+    ColorItem(ColorModel.DEFAULT) {}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ColorPickerPreview() {
-	ColorPicker(
-		colors = listOf(
-			ColorModel.DEFAULT,
-			ColorModel.DEFAULT,
-			ColorModel.DEFAULT
-		)
-	) { }
+    ColorPicker(
+        colors = listOf(
+            ColorModel.DEFAULT,
+            ColorModel.DEFAULT,
+            ColorModel.DEFAULT
+        )
+    ) { }
 }
