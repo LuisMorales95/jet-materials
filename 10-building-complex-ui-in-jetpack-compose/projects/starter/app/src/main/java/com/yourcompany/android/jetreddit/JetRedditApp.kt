@@ -34,6 +34,7 @@
 package com.yourcompany.android.jetreddit
 
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -70,6 +71,7 @@ fun JetRedditApp(viewModel: MainViewModel) {
   }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun AppContent(viewModel: MainViewModel) {
   val scaffoldState: ScaffoldState = rememberScaffoldState()
