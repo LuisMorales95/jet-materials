@@ -34,6 +34,7 @@
 package com.yourcompany.android.jetreddit
 
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -67,6 +68,7 @@ fun JetRedditApp(viewModel: MainViewModel) {
   }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun AppContent(viewModel: MainViewModel) {
   val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -74,8 +76,7 @@ private fun AppContent(viewModel: MainViewModel) {
   val navController = rememberNavController()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-  Crossfade(targetState = navBackStackEntry?.destination?.route) { route: String? ->
-
+  Crossfade(targetState = navBackStackEntry?.destination?.route, label = "") { route: String? ->
     Scaffold(
       topBar = getTopBar(Screen.fromRoute(route), scaffoldState, coroutineScope),
       drawerContent = {
@@ -96,7 +97,7 @@ private fun AppContent(viewModel: MainViewModel) {
       bottomBar = {
         BottomNavigationComponent(navController = navController)
       },
-      content = {
+      content = { _ ->
         MainScreenContainer(
           navController = navController,
           modifier = Modifier.padding(bottom = 56.dp),
